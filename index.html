@@ -1,28 +1,165 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<title>binglian</title>
-<style>
-body{margin:0;background:#000;overflow:hidden;font-family:courier}
-.modal{position:fixed;background:#000;border:2px solid #f00;padding:20px;min-width:250px;box-shadow:0 0 20px #f00}
-.modal-content{color:#f00;font-size:16px;font-weight:bold;text-align:center}
-.close-btn{position:absolute;top:5px;right:10px;color:#f00;cursor:pointer}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>病恋警告</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        .modal {
+            position: fixed;
+            background-color: #000;
+            border: 2px solid #ff0000;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            min-width: 250px;
+            max-width: 350px;
+            animation: pulse 2s infinite;
+        }
+
+        .modal-content {
+            color: #ff0000;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+            letter-spacing: 1px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            color: #ff0000;
+            font-size: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .close-btn:hover {
+            text-shadow: 0 0 10px rgba(255, 0, 0, 1);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+            50% { box-shadow: 0 0 30px rgba(255, 0, 0, 1); }
+            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+        }
+    </style>
 </head>
 <body>
-<script>
-const q=["爱比死冷","LOOK ME","要么与我同在，要么化为乌有","你是我罪有应得的那桩恶习","别怕，疼痛只是爱的证明"];
-let z=1e3;
-function create(){
- const m=document.createElement("div");m.className="modal";
- m.style.left=Math.random()*(innerWidth-300)+"px";
- m.style.top=Math.random()*(innerHeight-100)+"px";
- m.style.zIndex=z++;
- m.innerHTML='<span class="close-btn" onclick="this.parentElement.remove()">×</span><div class="modal-content">'+q[Math.floor(Math.random()*q.length)]+'</div>';
- document.body.appendChild(m);
-}
-setInterval(create,600);
-</script>
+    <script>
+        // 扩展后的语录列表
+        const quotes = [
+            "亲爱的，爱比死冷。",
+            "LOOK ME",
+            "我会烧尽带你离开我的每座桥梁。",
+            "要么与我同在，要么化为乌有。",
+            "你是我罪有应得的那桩恶习。",
+            "别回头看。",
+            "你还能去哪？",
+            "别怕，疼痛只是爱的证明。",
+            "你的名字刻在我每一根骨头上。",
+            "我们一起腐烂，好不好？",
+            "你的自由在我死亡之后。",
+            "我会把你泡在福尔马林，挂在我的床头，每日都与我早安。",
+            "只需在我床上哭泣。",
+            "你的心跳是我最爱的节拍器。",
+            "我要把你的微笑缝在我的唇上。",
+            "你的呼吸是我存在的唯一证明。",
+            "在我的世界里，你永远无法关机。",
+            "你的恐惧让我更加兴奋。",
+            "我们一起坠入永不醒来的噩梦吧。",
+            "你的皮肤是我最爱的画布。",
+            "我要收藏你每一滴眼泪。",
+            "你是我的，连影子都不许逃走。",
+            "让我们一起在黑暗中慢慢窒息。",
+            "你的痛苦是我最美的交响乐。"
+        ];
+
+        let zIndex = 1000;
+        let modalCount = 0;
+
+        function getRandomPosition() {
+            const margin = 50;
+            const x = Math.random() * (window.innerWidth - margin * 2) + margin;
+            const y = Math.random() * (window.innerHeight - margin * 2) + margin;
+            return { x, y };
+        }
+
+        function createModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            const position = getRandomPosition();
+            
+            modal.style.left = position.x + 'px';
+            modal.style.top = position.y + 'px';
+            modal.style.zIndex = zIndex++;
+            
+            modal.innerHTML = `
+                <span class="close-btn" onclick="this.parentElement.remove()">×</span>
+                <div class="modal-content">${randomQuote}</div>
+            `;
+            
+            document.body.appendChild(modal);
+            modalCount++;
+            
+            // 随机移除一些旧的弹窗，但保持大多数
+            if (modalCount > 50 && Math.random() > 0.7) {
+                const oldModals = document.querySelectorAll('.modal');
+                if (oldModals.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * Math.min(10, oldModals.length));
+                    oldModals[randomIndex].remove();
+                }
+            }
+        }
+
+        // 持续生成弹窗
+        function startModalStorm() {
+            createModal();
+            
+            // 逐渐加快生成速度
+            let interval = 800;
+            const speedUp = () => {
+                if (interval > 100) {
+                    interval -= 50;
+                }
+                setTimeout(speedUp, 3000);
+            };
+            speedUp();
+            
+            // 持续生成
+            setInterval(() => {
+                createModal();
+                
+                // 偶尔一次生成多个
+                if (Math.random() > 0.8) {
+                    for (let i = 0; i < Math.floor(Math.random() * 3) + 1; i++) {
+                        setTimeout(createModal, i * 100);
+                    }
+                }
+            }, interval);
+        }
+
+        // 页面加载后开始
+        window.onload = () => {
+            // 延迟1秒开始
+            setTimeout(startModalStorm, 1000);
+        };
+
+        // 防止用户关闭页面
+        window.onbeforeunload = () => {
+            return "你确定要离开我吗？";
+        };
+    </script>
 </body>
 </html>
